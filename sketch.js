@@ -50,7 +50,7 @@ function draw(){
         let ball = square(ballX, ballY, ballSize);
 
         rightMovement();
-        leftMovement();
+        //leftMovement();
         ballMovement();
         AI();
         winnerCheck();
