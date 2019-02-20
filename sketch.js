@@ -14,9 +14,17 @@ let rightScore = 0;
 
 let font;
 let fontsize = 100;
+const volume = 1;
+let winSoundPlayCount = 0;
+
 
 function preload(){
     font = loadFont('game_over.ttf');
+    soundFormats('mp3', 'ogg', 'wav');
+    paddleSound = loadSound('sounds/paddle.ogg');
+    scoreSound = loadSound('sounds/score.ogg');
+    wallSound = loadSound('sounds/wall.ogg');
+    winSound = loadSound('sounds/win.wav');
 }
 
 function setup(){
@@ -24,24 +32,28 @@ function setup(){
     textFont(font);
     textSize(fontsize);
     textAlign(CENTER, CENTER);
+    paddleSound.setVolume(volume);
+    scoreSound.setVolume(volume);
+    wallSound.setVolume(volume);
+    //winSound.playMode(untilDone);
 }
 
 function draw(){
-    background(0);
-    frameRate(60);
-    fill(255);
+        background(0);
+        frameRate(60);
+        fill(255);
 
-    text(leftScore, 300, 20);
-    text(rightScore, 500, 20);
-    let leftPaddle = rect(leftX, leftY, 20, 80);
-    let rightPaddle = rect(rightX, rightY, 20, 80);
-    let ball = square(ballX, ballY, ballSize);
+        text(leftScore, 300, 20);
+        text(rightScore, 500, 20);
+        let leftPaddle = rect(leftX, leftY, 20, 80);
+        let rightPaddle = rect(rightX, rightY, 20, 80);
+        let ball = square(ballX, ballY, ballSize);
 
-    rightMovement();
-    leftMovement();
-    ballMovement();
-    AI();
-    winnerCheck();
+        rightMovement();
+        leftMovement();
+        ballMovement();
+        AI();
+        winnerCheck();
 }
 
 function rightMovement(){
@@ -67,10 +79,12 @@ function ballMovement(){
     if((ballY + ballSize) > 400)
     {
         ballYSpeed *= -1;
+        wallSound.play();
     }
     if(ballY < 0)
     {
         ballYSpeed *= -1;
+        wallSound.play();
     }
 
     // collision with paddle
@@ -78,22 +92,26 @@ function ballMovement(){
     {
         ballX += 5;
         ballXSpeed *= -1;
+        paddleSound.play();
     }
     if(ballX > 750 && ballY > rightY && ballY < (rightY + 80))
     {
         ballX -= 5;
         ballXSpeed *= -1;
+        paddleSound.play();
     }
 
     // goal
     if((ballX + ballSize) > 800)
     {
         leftScore += 1;
+        scoreSound.play();
         reset();
     }
     if(ballX < 0)
     {
         rightScore += 1;
+        scoreSound.play();
         reset();
     }
 
@@ -113,12 +131,22 @@ function winnerCheck(){
         ballXSpeed = 0;
         ballYSpeed = 0;
         text('Right Wins', 400, 75);
+        if(!winSound.isPlaying() && winSoundPlayCount < 1)
+        {
+            winSound.play();
+            winSoundPlayCount++;
+        }
     }
 
     if(leftScore > 9){
         ballXSpeed = 0;
         ballYSpeed = 0;
         text('Left Wins', 400, 75);
+        if(!winSound.isPlaying() && winSoundPlayCount < 1)
+        {
+            winSound.play();
+            winSoundPlayCount++;
+        }
     }
 }
 
