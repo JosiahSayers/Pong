@@ -20,6 +20,8 @@ let fontsize = 100;
 const volume = 1;
 let winSoundPlayCount = 0;
 
+let AISpeed = 3;
+
 
 function preload(){
     font = loadFont('game_over.ttf');
@@ -164,11 +166,28 @@ function winnerCheck(){
 function AI(){
     let paddleCenter = leftY + 40;
 
+    if(rightScore > 3)
+    {
+        AISpeed = 3.25;
+    }
+    if(rightScore > 5)
+    {
+        AISpeed = 3.5;
+    }
+    if(rightScore > 7)
+    {
+        AISpeed = 3.75;
+    }
+    if(rightScore > 8)
+    {
+        AISpeed = 4;
+    }
+
     if(paddleCenter < ballY){
-        leftY += 5;
+        leftY += AISpeed;
     }
     else if(paddleCenter > ballY){
-        leftY -= 5;
+        leftY -= AISpeed;
     }
 
 }
