@@ -3,6 +3,9 @@ let leftY = 160;
 const rightX = 770;
 const leftX = 10;
 
+let leftPaddleFill = [255, 255, 255];
+let rightPaddleFill = [255, 255, 255];
+
 let ballY = 200;
 let ballX = 400;
 const ballSize = 20;
@@ -45,8 +48,11 @@ function draw(){
 
         text(leftScore, 300, 20);
         text(rightScore, 500, 20);
+        fill(leftPaddleFill[0], leftPaddleFill[1], leftPaddleFill[2]);
         let leftPaddle = rect(leftX, leftY, 20, 80);
+        fill(rightPaddleFill[0], rightPaddleFill[1], rightPaddleFill[2]);
         let rightPaddle = rect(rightX, rightY, 20, 80);
+        fill(255);
         let ball = square(ballX, ballY, ballSize);
 
         rightMovement();
@@ -136,6 +142,8 @@ function winnerCheck(){
             winSound.play();
             winSoundPlayCount++;
         }
+        rightPaddleFill = [0,255,0];
+        leftPaddleFill = [255, 0, 0];
     }
 
     if(leftScore > 9){
@@ -147,6 +155,9 @@ function winnerCheck(){
             winSound.play();
             winSoundPlayCount++;
         }
+        leftPaddleFill = [0,255,0];
+        rightPaddleFill = [255, 0, 0];
+
     }
 }
 
