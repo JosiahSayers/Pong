@@ -20,7 +20,7 @@ let fontsize = 100;
 const volume = 1;
 let winSoundPlayCount = 0;
 
-let AISpeed = 3;
+let AISpeed = 4;
 
 
 function preload(){
