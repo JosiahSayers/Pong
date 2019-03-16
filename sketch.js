@@ -21,7 +21,6 @@ const volume = 1;
 let winSoundPlayCount = 0;
 
 const AISpeed = 4;
-const collisionDelay = 100;
 
 
 function preload(){
