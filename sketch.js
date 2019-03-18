@@ -1,16 +1,22 @@
-let rightY = 160;
-let leftY = 160;
-const rightX = 770;
-const leftX = 10;
+const leftPaddle = {
+    x: 10,
+    y: 160,
+    fill: [255, 255, 255]
+};
 
-let leftPaddleFill = [255, 255, 255];
-let rightPaddleFill = [255, 255, 255];
+const rightPaddle = {
+    x: 770,
+    y: 160,
+    fill: [255, 255, 255]
+};
 
-let ballY = 200;
-let ballX = 400;
-const ballSize = 20;
-let ballYSpeed = 5;
-let ballXSpeed = 5;
+const ball = {
+    x: 200,
+    y: 400,
+    size: 20,
+    xSpeed: 5,
+    ySpeed: 5
+};
 
 let leftScore = 0;
 let rightScore = 0;
@@ -50,12 +56,12 @@ function draw(){
 
         text(leftScore, 300, 20);
         text(rightScore, 500, 20);
-        fill(leftPaddleFill[0], leftPaddleFill[1], leftPaddleFill[2]);
-        let leftPaddle = rect(leftX, leftY, 20, 80);
-        fill(rightPaddleFill[0], rightPaddleFill[1], rightPaddleFill[2]);
-        let rightPaddle = rect(rightX, rightY, 20, 80);
+        fill(leftPaddle.fill[0], leftPaddle.fill[1], leftPaddle.fill[2]);
+        rect(leftPaddle.x, leftPaddle.y, 20, 80);
+        fill(rightPaddle.fill[0], rightPaddle.fill[1], rightPaddle.fill[2]);
+        rect(rightPaddle.x, rightPaddle.y, 20, 80);
         fill(255);
-        let ball = square(ballX, ballY, ballSize);
+        square(ball.x, ball.y, ball.size);
 
         rightMovement();
         //leftMovement();
@@ -65,112 +71,112 @@ function draw(){
 }
 
 function rightMovement(){
-    if(keyIsDown(DOWN_ARROW) && rightY < 320){
-        rightY += 5;
+    if(keyIsDown(DOWN_ARROW) && rightPaddle.y < 320){
+        rightPaddle.y += 5;
     }
-    else if(keyIsDown(UP_ARROW) && rightY > 0){
-        rightY -= 5;
+    else if(keyIsDown(UP_ARROW) && rightPaddle.y > 0){
+        rightPaddle.y -= 5;
     }
 }
 
 function leftMovement(){
     if(keyIsDown(87) && leftY > 0){
-        leftY -= 5;
+        leftPaddle.y -= 5;
     }
     else if(keyIsDown(83) && leftY < 320){
-        leftY += 5;
+        leftPaddle.y += 5;
     }
 }
 
 function ballMovement(){
     // collision with wall
-    if((ballY + ballSize) > 400)
+    if((ball.y + ball.size) > 400)
     {
-        ballYSpeed *= -1;
+        ball.ySpeed *= -1;
         wallSound.play();
     }
-    if(ballY < 0)
+    if(ball.y < 0)
     {
-        ballYSpeed *= -1;
+        ball.ySpeed *= -1;
         wallSound.play();
     }
 
     // collision with paddle
-    if(ballX < 30 && ballY > leftY && ballY < (leftY + 80))
+    if(ball.x < 30 && ball.y > leftPaddle.y && ball.y < (leftPaddle.y + 80))
     {
-        ballX += 5;
-        ballXSpeed *= -1;
+        ball.x += 5;
+        ball.xSpeed *= -1;
         paddleSound.play();
     }
-    if(ballX > 750 && ballY > rightY && ballY < (rightY + 80))
+    if(ball.x > 750 && ball.y > rightPaddle.y && ball.y < (rightPaddle.y + 80))
     {
-        ballX -= 5;
-        ballXSpeed *= -1;
+        ball.x -= 5;
+        ball.xSpeed *= -1;
         paddleSound.play();
     }
 
     // goal
-    if((ballX + ballSize) > 800)
+    if((ball.x + ball.size) > 800)
     {
         leftScore += 1;
         scoreSound.play();
         reset();
     }
-    if(ballX < 0)
+    if(ball.x < 0)
     {
         rightScore += 1;
         scoreSound.play();
         reset();
     }
 
-    ballY += ballYSpeed;
-    ballX += ballXSpeed;
+    ball.y += ball.ySpeed;
+    ball.x += ball.xSpeed;
 }
 
 function reset(){
-    rightY = 160;
-    leftY = 160;
-    ballY = 200;
-    ballX = 400;
+    rightPaddle.y = 160;
+    leftPaddle.y = 160;
+    ball.y = 200;
+    ball.x = 400;
 }
 
 function winnerCheck(){
     if(rightScore > 9){
-        ballXSpeed = 0;
-        ballYSpeed = 0;
+        ball.xSpeed = 0;
+        ball.ySpeed = 0;
         text('Right Wins', 400, 75);
         if(!winSound.isPlaying() && winSoundPlayCount < 1)
         {
             winSound.play();
             winSoundPlayCount++;
         }
-        rightPaddleFill = [0,255,0];
-        leftPaddleFill = [255, 0, 0];
+        rightPaddle.fill = [0,255,0];
+        leftPaddle.fill = [255, 0, 0];
     }
 
     if(leftScore > 9){
-        ballXSpeed = 0;
-        ballYSpeed = 0;
+        ball.xSpeed = 0;
+        ball.ySpeed = 0;
         text('Left Wins', 400, 75);
         if(!winSound.isPlaying() && winSoundPlayCount < 1)
         {
             winSound.play();
             winSoundPlayCount++;
         }
-        leftPaddleFill = [0,255,0];
-        rightPaddleFill = [255, 0, 0];
+        leftPaddle.fill = [0,255,0];
+        rightPaddle.fill = [255, 0, 0];
 
     }
 }
 
 function AI(){
-    let paddleCenter = leftY + 40;
+    let paddleCenter = leftPaddle.y + 40;
 
-    if(paddleCenter < ballY){
-        leftY += AISpeed;
+    if(paddleCenter < ball.y){
+        leftPaddle.y += AISpeed;
     }
-    else if(paddleCenter > ballY){
-        leftY -= AISpeed;
+    else if(paddleCenter > ball.y){
+        leftPaddle.y -= AISpeed;
     }
 
 }
