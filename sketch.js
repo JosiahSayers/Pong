@@ -84,6 +84,9 @@ function draw(){
         AI();
         winnerCheck();
     }
+    else {
+        text('Paused, enter to continue', wWidth/2, wHeight/2);
+    }
     keyPressed();
 }
 
@@ -199,5 +202,8 @@ function keyPressed() {
     if (keyCode === ESCAPE) {
         paused = true;
         keyCode = 0;
+    } else if (keyCode === ENTER) {
+        paused = false;
+        keyCode - 0;
     }
 }
