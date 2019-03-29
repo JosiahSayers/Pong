@@ -13,7 +13,8 @@ let fontsize = 100;
 const volume = 1;
 let winSoundPlayCount = 0;
 
-const AISpeed = 4;
+const AISpeed = 8;
+const playerSpeed = 8;
 
 let paused = false;
 
@@ -60,7 +61,7 @@ function setup(){
     size: 20,
     xSpeed: 5,
     ySpeed: 5,
-    numberOfBounces: 0
+    numberOfBounces: 1
     };
 }
 
@@ -88,10 +89,10 @@ function draw(){
 
 function rightMovement(){
     if(keyIsDown(DOWN_ARROW) && rightPaddle.y + rightPaddle.height < wHeight){
-        rightPaddle.y += 5;
+        rightPaddle.y += playerSpeed;
     }
     else if(keyIsDown(UP_ARROW) && rightPaddle.y > 0){
-        rightPaddle.y -= 5;
+        rightPaddle.y -= playerSpeed;
     }
 }
 
@@ -113,14 +114,14 @@ function ballMovement(){
     {
         ball.x += 5;
         ball.xSpeed *= -1;
-        ball.numberOfBounces++;
+        ball.numberOfBounces += 0.05;
         paddleSound.play();
     }
     if(ball.x > wWidth - 50 && ball.y > rightPaddle.y && ball.y < (rightPaddle.y + rightPaddle.height))
     {
         ball.x -= 5;
         ball.xSpeed *= -1;
-        ball.numberOfBounces++;
+        ball.numberOfBounces += 0.05;
         paddleSound.play();
     }
 
@@ -138,8 +139,8 @@ function ballMovement(){
         reset();
     }
 
-    ball.y += ball.ySpeed;
-    ball.x += ball.xSpeed;
+    ball.y += ball.ySpeed * ball.numberOfBounces;
+    ball.x += ball.xSpeed * ball.numberOfBounces;
 }
 
 function reset(){
@@ -147,7 +148,7 @@ function reset(){
     leftPaddle.y = wHeight/2;
     ball.y = random(wHeight*0.3, wHeight*0.7);
     ball.x = wWidth/2;
-    ball.numberOfBounces = 0;
+    ball.numberOfBounces = 1;
 }
 
 function winnerCheck(){
@@ -180,13 +181,17 @@ function winnerCheck(){
 }
 
 function AI(){
-    let paddleCenter = leftPaddle.y + 40;
+    let paddleCenter = leftPaddle.y + leftPaddle.height/2;
 
     if(paddleCenter < ball.y){
-        leftPaddle.y += AISpeed;
+        if(leftPaddle.y < wHeight - leftPaddle.height) {
+            leftPaddle.y += AISpeed;
+        }
     }
     else if(paddleCenter > ball.y){
-        leftPaddle.y -= AISpeed;
+        if (leftPaddle.y > 0) {
+            leftPaddle.y -= AISpeed;
+        }
     }
 }
 
