@@ -59,8 +59,8 @@ function setup(){
     x: wWidth/2,
     y: random(wHeight*0.3, wHeight*0.7),
     size: 20,
-    xSpeed: 5,
-    ySpeed: 5,
+    xSpeed: 6,
+    ySpeed: 6,
     numberOfBounces: 1
     };
 }
