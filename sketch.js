@@ -1,22 +1,9 @@
-const leftPaddle = {
-    x: 10,
-    y: 160,
-    fill: [255, 255, 255]
-};
+let leftPaddle;
+let rightPaddle;
+let ball;
 
-const rightPaddle = {
-    x: 770,
-    y: 160,
-    fill: [255, 255, 255]
-};
-
-const ball = {
-    x: 200,
-    y: 400,
-    size: 20,
-    xSpeed: 5,
-    ySpeed: 5
-};
+let wHeight;
+let wWidth;
 
 let leftScore = 0;
 let rightScore = 0;
@@ -26,8 +13,10 @@ let fontsize = 100;
 const volume = 1;
 let winSoundPlayCount = 0;
 
-const AISpeed = 4;
+const AISpeed = 8;
+const playerSpeed = 8;
 
+let paused = false;
 
 function preload(){
     font = loadFont('game_over.ttf');
@@ -39,7 +28,9 @@ function preload(){
 }
 
 function setup(){
-    createCanvas(800, 400);
+    wHeight = windowHeight;
+    wWidth = windowWidth;
+    createCanvas(wWidth, wHeight);
     textFont(font);
     textSize(fontsize);
     textAlign(CENTER, CENTER);
@@ -47,6 +38,31 @@ function setup(){
     scoreSound.setVolume(volume);
     wallSound.setVolume(volume);
     //winSound.playMode(untilDone);
+
+    leftPaddle = {
+      x: 10,
+      y: wHeight/2,
+      fill: [255, 255, 255],
+      width: 20,
+      height: wHeight/5
+    };
+  
+  rightPaddle = {
+      x: wWidth - 30,
+      y: wHeight/2,
+      fill: [255, 255, 255],
+      width: 20,
+      height: wHeight/5
+    };
+
+  ball = {
+    x: wWidth/2,
+    y: random(wHeight*0.3, wHeight*0.7),
+    size: 20,
+    xSpeed: 6,
+    ySpeed: 6,
+    numberOfBounces: 1
+    };
 }
 
 function draw(){
@@ -54,43 +70,38 @@ function draw(){
         frameRate(60);
         fill(255);
 
-        text(leftScore, 300, 20);
-        text(rightScore, 500, 20);
+        text(leftScore, wWidth/3, 20);
+        text(rightScore, wWidth/3 + wWidth/3, 20);
         fill(leftPaddle.fill[0], leftPaddle.fill[1], leftPaddle.fill[2]);
-        rect(leftPaddle.x, leftPaddle.y, 20, 80);
+        rect(leftPaddle.x, leftPaddle.y, leftPaddle.width, leftPaddle.height);
         fill(rightPaddle.fill[0], rightPaddle.fill[1], rightPaddle.fill[2]);
-        rect(rightPaddle.x, rightPaddle.y, 20, 80);
+        rect(rightPaddle.x, rightPaddle.y, rightPaddle.width, rightPaddle.height);
         fill(255);
         square(ball.x, ball.y, ball.size);
-
+    if(paused == false){
         rightMovement();
-        //leftMovement();
         ballMovement();
         AI();
         winnerCheck();
+    }
+    else {
+        text('Paused, enter to continue', wWidth/2, wHeight/2);
+    }
+    keyPressed();
 }
 
 function rightMovement(){
-    if(keyIsDown(DOWN_ARROW) && rightPaddle.y < 320){
-        rightPaddle.y += 5;
+    if(keyIsDown(DOWN_ARROW) && rightPaddle.y + rightPaddle.height < wHeight){
+        rightPaddle.y += playerSpeed;
     }
     else if(keyIsDown(UP_ARROW) && rightPaddle.y > 0){
-        rightPaddle.y -= 5;
-    }
-}
-
-function leftMovement(){
-    if(keyIsDown(87) && leftY > 0){
-        leftPaddle.y -= 5;
-    }
-    else if(keyIsDown(83) && leftY < 320){
-        leftPaddle.y += 5;
+        rightPaddle.y -= playerSpeed;
     }
 }
 
 function ballMovement(){
     // collision with wall
-    if((ball.y + ball.size) > 400)
+    if((ball.y + ball.size) > wHeight)
     {
         ball.ySpeed *= -1;
         wallSound.play();
@@ -102,21 +113,23 @@ function ballMovement(){
     }
 
     // collision with paddle
-    if(ball.x < 30 && ball.y > leftPaddle.y && ball.y < (leftPaddle.y + 80))
+    if(ball.x < 30 && ball.y > leftPaddle.y && ball.y < (leftPaddle.y + leftPaddle.height))
     {
         ball.x += 5;
         ball.xSpeed *= -1;
+        ball.numberOfBounces += 0.05;
         paddleSound.play();
     }
-    if(ball.x > 750 && ball.y > rightPaddle.y && ball.y < (rightPaddle.y + 80))
+    if(ball.x > wWidth - 50 && ball.y > rightPaddle.y && ball.y < (rightPaddle.y + rightPaddle.height))
     {
         ball.x -= 5;
         ball.xSpeed *= -1;
+        ball.numberOfBounces += 0.05;
         paddleSound.play();
     }
 
     // goal
-    if((ball.x + ball.size) > 800)
+    if((ball.x + ball.size) > wWidth)
     {
         leftScore += 1;
         scoreSound.play();
@@ -129,35 +142,36 @@ function ballMovement(){
         reset();
     }
 
-    ball.y += ball.ySpeed;
-    ball.x += ball.xSpeed;
+    ball.y += ball.ySpeed * ball.numberOfBounces;
+    ball.x += ball.xSpeed * ball.numberOfBounces;
 }
 
 function reset(){
-    rightPaddle.y = 160;
-    leftPaddle.y = 160;
-    ball.y = 200;
-    ball.x = 400;
+    rightPaddle.y = wHeight/2;
+    leftPaddle.y = wHeight/2;
+    ball.y = random(wHeight*0.3, wHeight*0.7);
+    ball.x = wWidth/2;
+    ball.numberOfBounces = 1;
 }
 
 function winnerCheck(){
     if(rightScore > 9){
         ball.xSpeed = 0;
         ball.ySpeed = 0;
-        text('Right Wins', 400, 75);
+        text('Right Wins', wWidth/2, 75);
         if(!winSound.isPlaying() && winSoundPlayCount < 1)
         {
             winSound.play();
             winSoundPlayCount++;
         }
-        rightPaddle.fill = [0,255,0];
+        rightPaddle.fill = [0, 255, 0];
         leftPaddle.fill = [255, 0, 0];
     }
 
     if(leftScore > 9){
         ball.xSpeed = 0;
         ball.ySpeed = 0;
-        text('Left Wins', 400, 75);
+        text('Left Wins', wWidth/2, 75);
         if(!winSound.isPlaying() && winSoundPlayCount < 1)
         {
             winSound.play();
@@ -170,13 +184,26 @@ function winnerCheck(){
 }
 
 function AI(){
-    let paddleCenter = leftPaddle.y + 40;
+    let paddleCenter = leftPaddle.y + leftPaddle.height/2;
 
     if(paddleCenter < ball.y){
-        leftPaddle.y += AISpeed;
+        if(leftPaddle.y < wHeight - leftPaddle.height) {
+            leftPaddle.y += AISpeed;
+        }
     }
     else if(paddleCenter > ball.y){
-        leftPaddle.y -= AISpeed;
+        if (leftPaddle.y > 0) {
+            leftPaddle.y -= AISpeed;
+        }
     }
+}
 
+function keyPressed() {
+    if (keyCode === ESCAPE) {
+        paused = true;
+        keyCode = 0;
+    } else if (keyCode === ENTER) {
+        paused = false;
+        keyCode - 0;
+    }
 }
