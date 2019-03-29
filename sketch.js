@@ -70,8 +70,8 @@ function draw(){
         frameRate(60);
         fill(255);
 
-        text(leftScore, 300, 20);
-        text(rightScore, 500, 20);
+        text(leftScore, wWidth/3, 20);
+        text(rightScore, wWidth/3 + wWidth/3, 20);
         fill(leftPaddle.fill[0], leftPaddle.fill[1], leftPaddle.fill[2]);
         rect(leftPaddle.x, leftPaddle.y, leftPaddle.width, leftPaddle.height);
         fill(rightPaddle.fill[0], rightPaddle.fill[1], rightPaddle.fill[2]);
